@@ -8,6 +8,7 @@ extends CharacterBody2D
 @onready var sprite = $Sprite2D
 @onready var timer = $Timer
 @onready var sightArea = $MarkerSight
+@onready var rayCastFloor = $RayCastFloor
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var random = RandomNumberGenerator.new()
@@ -38,6 +39,7 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
+	checkFloor()
 	move_and_slide()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -45,16 +47,22 @@ func _process(delta):
 	update_animation()
 	update_facing_sprite()
 
+func checkFloor():
+	if not rayCastFloor.is_colliding():
+		random_result *= -1
+
 func update_animation():
 	animationTree.set("parameters/Move/blend_position", direction)
 
 func update_facing_sprite():
-	if velocity.x < 0:
+	if random_result < 0:
 		sprite.flip_h = false
 		sightArea.rotation_degrees = 0
-	elif velocity.x > 0:
+		rayCastFloor.position.x = -13
+	elif random_result > 0:
 		sprite.flip_h = true
 		sightArea.rotation_degrees = 180
+		rayCastFloor.position.x = 13
 
 func _on_timer_timeout():
 	random_result = random.randi_range(-1, 1)
@@ -72,3 +80,13 @@ func _on_animation_tree_animation_finished(anim_name):
 	if anim_name == "GetOut":
 		is_hiding = false
 		is_vulnerable = true
+
+func death():
+	pass
+
+func damage(value):
+	if is_vulnerable:
+		playback.travel("Hit")
+		HEALTH -= 1
+	if HEALTH <= 0:
+		get_parent().queue_free()

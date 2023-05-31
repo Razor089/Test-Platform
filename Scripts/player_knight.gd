@@ -2,12 +2,15 @@ extends CharacterBody2D
 
 
 @export var SPEED = 200.0
+@export var DASH_SPEED = 300.0
 @export var ROLLING_SPEED = 250.0
 @export var JUMP_VELOCITY = -300.0
 @export var SECOND_JUMP_VELOCITY = -200.0
 @export var FALL_VELOCITY = 300.0
 @export var JUMP_BUFFER_TIME = 15
 @export var COYOTE_TIME = 15
+@export var SWORD_DAMAGE = 2
+@export var DASH_TIME = 15
 
 @onready var animatedSprite = $AnimatedSprite2D
 @onready var sprite = $Sprite2D
@@ -23,6 +26,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var direction = Vector2.ZERO
 var jump_buffer_counter = 0
 var coyote_counter = 0
+var dash_counter = 0
 
 # internal booleans
 var has_double_jump: bool = false
@@ -34,7 +38,6 @@ var is_rolling: bool = false
 
 func _ready():
 	animationTree.active = true
-
 
 func _physics_process(delta):
 	
@@ -70,6 +73,8 @@ func _physics_process(delta):
 	direction = Input.get_axis("ui_left", "ui_right")
 	if direction and not is_attacking and not is_rolling:
 		velocity.x = direction * SPEED
+	elif dash_counter > 0:
+		velocity.x = direction * DASH_SPEED
 	elif not is_rolling:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
@@ -99,6 +104,14 @@ func _physics_process(delta):
 		timer.stop()
 		is_attacking = true
 		playback.travel("Attack2")
+		
+	# Handle dash
+	if Input.is_action_just_pressed("dash") and not is_rolling and not is_attacking:
+		dash_counter = DASH_TIME
+	
+	if dash_counter > 0:
+		dash_counter -= 1
+		velocity.y = 0
 
 	move_and_slide()
 
@@ -130,6 +143,11 @@ func update_animation():
 	elif velocity.y == 0 and is_on_floor() and not is_rolling:
 		playback.travel("Move")
 		is_sliding = false
+	
+	if dash_counter > 0:
+		playback.travel("Dash")
+	else:
+		playback.travel("Move")
 
 func animation_direction():
 	if direction < 0:
@@ -158,3 +176,5 @@ func _on_animation_tree_animation_finished(anim_name):
 		is_rolling = false
 		playback.travel("Move")
 
+func _on_sword_area_body_entered(body):
+	body.damage(SWORD_DAMAGE)

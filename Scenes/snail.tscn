@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cbi21jcb1ajs"]
+[gd_scene load_steps=28 format=3 uid="uid://cbi21jcb1ajs"]
 
 [ext_resource type="Texture2D" uid="uid://bmsg3f5nc1dcf" path="res://Resources/Legacy-Fantasy - High Forest 2.3/Mob/Snail/all.png" id="1_uooof"]
 [ext_resource type="Script" path="res://Scripts/Snail.gd" id="1_wytfp"]
@@ -103,11 +103,28 @@ tracks/0/keys = {
 "values": [0, 1, 2, 3, 4, 5, 6, 7]
 }
 
+[sub_resource type="Animation" id="Animation_c2vde"]
+resource_name = "Hit"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [32]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0ui0w"]
 _data = {
 "Death": SubResource("Animation_va3y2"),
 "GetOut": SubResource("Animation_rmcv6"),
 "Hide": SubResource("Animation_efu5o"),
+"Hit": SubResource("Animation_c2vde"),
 "Idle": SubResource("Animation_mr74d"),
 "RESET": SubResource("Animation_kp7vn"),
 "Walk": SubResource("Animation_nrrc5")
@@ -118,6 +135,9 @@ animation = &"GetOut"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bewdo"]
 animation = &"Hide"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k3qca"]
+animation = &"Hit"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4jxtj"]
 animation = &"Idle"
@@ -149,14 +169,22 @@ switch_mode = 2
 switch_mode = 2
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_bxp4y"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_edm2p"]
+switch_mode = 2
+advance_mode = 2
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_ci1aq"]
 states/GetOut/node = SubResource("AnimationNodeAnimation_rh7nl")
 states/GetOut/position = Vector2(494, 13.625)
 states/Hide/node = SubResource("AnimationNodeAnimation_bewdo")
 states/Hide/position = Vector2(333.5, 13.875)
+states/Hit/node = SubResource("AnimationNodeAnimation_k3qca")
+states/Hit/position = Vector2(489.36, 95.7625)
 states/Move/node = SubResource("AnimationNodeBlendSpace1D_rjw6v")
 states/Move/position = Vector2(333, 99)
-transitions = ["Start", "Move", SubResource("AnimationNodeStateMachineTransition_tckwn"), "Move", "Hide", SubResource("AnimationNodeStateMachineTransition_owclb"), "Hide", "GetOut", SubResource("AnimationNodeStateMachineTransition_rsq3m"), "GetOut", "Move", SubResource("AnimationNodeStateMachineTransition_ry36g")]
+transitions = ["Start", "Move", SubResource("AnimationNodeStateMachineTransition_tckwn"), "Move", "Hide", SubResource("AnimationNodeStateMachineTransition_owclb"), "Hide", "GetOut", SubResource("AnimationNodeStateMachineTransition_rsq3m"), "GetOut", "Move", SubResource("AnimationNodeStateMachineTransition_ry36g"), "Move", "Hit", SubResource("AnimationNodeStateMachineTransition_bxp4y"), "Hit", "Move", SubResource("AnimationNodeStateMachineTransition_edm2p")]
 graph_offset = Vector2(-154.14, -38.7375)
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_w0ug7"]
@@ -202,6 +230,10 @@ collision_mask = 2
 [node name="SightShape" type="CollisionShape2D" parent="MarkerSight/SightArea"]
 position = Vector2(-42.5, 0)
 shape = SubResource("RectangleShape2D_rm8ul")
+
+[node name="RayCastFloor" type="RayCast2D" parent="."]
+position = Vector2(-13, 0)
+target_position = Vector2(0, 10)
 
 [connection signal="animation_finished" from="AnimationTree" to="." method="_on_animation_tree_animation_finished"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
