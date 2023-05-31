@@ -1,13 +1,16 @@
 extends CharacterBody2D
 
+@export_category("Movements")
 @export var SPEED = 200.0
 @export var JUMP_SPEED = -300
 @export var ROLL_SPEED = 280.0
 @export var FALL_SPEED = 300
 @export var SLIDE_SPEED = 100
+@export_category("Timers")
 @export var JUMP_BUFFER_TIME = 15
 @export var COYOTE_BUFFER_TIME = 15
 @export var ATTACK_BUFFER_TIME = 15
+@export_category("Attack")
 @export var SWORD_ATTACK_VALUE = 2
 
 # References
@@ -59,7 +62,6 @@ func _physics_process(delta):
 			add_gravity(delta, SLIDE_SPEED)
 			handle_input()
 			slide()
-			pass
 	
 	move_and_slide()
 
@@ -116,6 +118,14 @@ func slide():
 	if is_on_floor():
 		state = IDLE
 	
+	if direction:
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+	
+	if not slideCastLeft.is_colliding() and not slideCastRight.is_colliding():
+		state = IDLE
+	
 	if jump_counter > 0:
 		velocity.y = JUMP_SPEED
 		state = IDLE
@@ -127,7 +137,6 @@ func slide():
 
 func update_animation():
 	animationTree.set("parameters/Move/blend_position", direction)
-	
 	match state:
 		IDLE:
 			if velocity.y < 0:
@@ -141,7 +150,6 @@ func update_animation():
 				playback.travel("Attack2")
 			else:
 				playback.travel("Attack1")
-			pass
 		ROLL:
 			playback.travel("Roll")
 		SLIDE:
@@ -149,7 +157,6 @@ func update_animation():
 				playback.travel("WallSlideLeft")
 			elif slideCastRight.is_colliding() and slideCastRight.get_collider():
 				playback.travel("WallSlideRight")
-	pass
 
 func facing_direction():
 	if direction > 0:
@@ -169,11 +176,11 @@ func _on_animation_tree_animation_finished(anim_name):
 		state = IDLE
 	elif anim_name == "Attack1":
 		state = IDLE
-		playback.travel("Move")
+		playback.travel("Move") # Ho bisogno di mettere qui il travel altrimenti si genera una sequenza aggiuntiva di animazione 
 		attack_counter = ATTACK_BUFFER_TIME
 	elif anim_name == "Attack2":
 		state = IDLE
-		playback.travel("Move")
+		playback.travel("Move") # Ho bisongo di mettere qui il travel altrimenti si generea una sequenza aggiuntiva di animazione
 
 
 func _on_sword_area_body_entered(body):
