@@ -1,6 +1,6 @@
 [gd_scene load_steps=90 format=3 uid="uid://daj1ldita1yon"]
 
-[ext_resource type="Script" path="res://Scripts/player_knight.gd" id="1_8fwwy"]
+[ext_resource type="Script" path="res://Scripts/PlayerController.gd" id="1_24qjd"]
 [ext_resource type="Texture2D" uid="uid://c2bt1pvmwuhtd" path="res://Sprites/Knight/_Idle.png" id="1_ha677"]
 [ext_resource type="Texture2D" uid="uid://f14r47s4i75s" path="res://Sprites/Knight/_Dash.png" id="2_7ki36"]
 [ext_resource type="Texture2D" uid="uid://cslu8y35cobhi" path="res://Sprites/Knight/_AttackNoMovement.png" id="2_hwn00"]
@@ -344,6 +344,48 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_kicdw"]
+resource_name = "Dash"
+length = 0.14
+loop_mode = 1
+step = 0.07
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_7ki36")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.07),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
 }
 
 [sub_resource type="Animation" id="Animation_ikipg"]
@@ -702,48 +744,6 @@ tracks/3/keys = {
 "values": [false, true]
 }
 
-[sub_resource type="Animation" id="Animation_kicdw"]
-resource_name = "Dash"
-length = 0.14
-loop_mode = 1
-step = 0.07
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [ExtResource("2_7ki36")]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Sprite2D:hframes")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [2]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Sprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.07),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [0, 1]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_i4cj0"]
 _data = {
 "Attack1": SubResource("Animation_oewbv"),
@@ -872,7 +872,7 @@ states/WallSlideLeft/position = Vector2(465.83, 49.1152)
 states/WallSlideRight/node = SubResource("AnimationNodeAnimation_c2us5")
 states/WallSlideRight/position = Vector2(465.955, -80.8848)
 transitions = ["Start", "Move", SubResource("AnimationNodeStateMachineTransition_afx53"), "Move", "Jump_start", SubResource("AnimationNodeStateMachineTransition_jbih5"), "Jump_start", "Jump_end", SubResource("AnimationNodeStateMachineTransition_sa3ke"), "Jump_end", "Move", SubResource("AnimationNodeStateMachineTransition_ufdoe"), "Move", "Attack1", SubResource("AnimationNodeStateMachineTransition_mp4qs"), "Attack1", "Move", SubResource("AnimationNodeStateMachineTransition_k5iw6"), "Attack1", "Attack2", SubResource("AnimationNodeStateMachineTransition_jy0qy"), "Attack2", "Move", SubResource("AnimationNodeStateMachineTransition_8c54j"), "Move", "Attack2", SubResource("AnimationNodeStateMachineTransition_ioplc"), "Jump_start", "WallSlideRight", SubResource("AnimationNodeStateMachineTransition_214pg"), "WallSlideRight", "Jump_start", SubResource("AnimationNodeStateMachineTransition_vamdg"), "WallSlideRight", "Jump_end", SubResource("AnimationNodeStateMachineTransition_0wuy0"), "Jump_end", "WallSlideRight", SubResource("AnimationNodeStateMachineTransition_5n7we"), "WallSlideLeft", "Jump_start", SubResource("AnimationNodeStateMachineTransition_7s8xh"), "Jump_start", "WallSlideLeft", SubResource("AnimationNodeStateMachineTransition_dkdhu"), "WallSlideLeft", "Jump_end", SubResource("AnimationNodeStateMachineTransition_ecrlr"), "Jump_end", "WallSlideLeft", SubResource("AnimationNodeStateMachineTransition_ywd8g"), "Move", "Roll", SubResource("AnimationNodeStateMachineTransition_ujltg"), "Roll", "Move", SubResource("AnimationNodeStateMachineTransition_1tbw8"), "Move", "Dash", SubResource("AnimationNodeStateMachineTransition_njjxm"), "Dash", "Move", SubResource("AnimationNodeStateMachineTransition_jeytn")]
-graph_offset = Vector2(-72.7597, -3.50984)
+graph_offset = Vector2(-59.7597, 29.4902)
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_pojp4"]
 
@@ -881,13 +881,12 @@ size = Vector2(41, 35)
 
 [node name="PlayerKnight" type="CharacterBody2D"]
 collision_layer = 2
-script = ExtResource("1_8fwwy")
-SECOND_JUMP_VELOCITY = -300.0
+script = ExtResource("1_24qjd")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(4, -40)
-texture = ExtResource("2_7ki36")
-hframes = 2
+texture = ExtResource("9_jfil8")
+hframes = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -18)

@@ -43,7 +43,7 @@ func _physics_process(delta):
 	move_and_slide()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	update_animation()
 	update_facing_sprite()
 
@@ -68,12 +68,12 @@ func _on_timer_timeout():
 	random_result = random.randi_range(-1, 1)
 	timer.start()
 
-func _on_sight_area_body_entered(body):
+func _on_sight_area_body_entered(_body):
 	playback.travel("Hide")
 	is_hiding = true
 	is_vulnerable = false
 
-func _on_sight_area_body_exited(body):
+func _on_sight_area_body_exited(_body):
 	playback.travel("GetOut")
 
 func _on_animation_tree_animation_finished(anim_name):
@@ -87,6 +87,6 @@ func death():
 func damage(value):
 	if is_vulnerable:
 		playback.travel("Hit")
-		HEALTH -= 1
+		HEALTH -= value
 	if HEALTH <= 0:
-		get_parent().queue_free()
+		queue_free()
