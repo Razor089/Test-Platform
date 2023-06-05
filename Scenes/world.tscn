@@ -1,8 +1,9 @@
-[gd_scene load_steps=19 format=3 uid="uid://cyat52l78juw7"]
+[gd_scene load_steps=20 format=3 uid="uid://cyat52l78juw7"]
 
 [ext_resource type="Texture2D" uid="uid://bwctmp3sjbit1" path="res://Resources/Legacy-Fantasy - High Forest 2.3/Assets/Tiles.png" id="1_or21j"]
 [ext_resource type="PackedScene" uid="uid://daj1ldita1yon" path="res://Scenes/player_knight.tscn" id="2_638v8"]
 [ext_resource type="PackedScene" uid="uid://cbi21jcb1ajs" path="res://Scenes/snail.tscn" id="2_u84ng"]
+[ext_resource type="PackedScene" uid="uid://k5dru7i6twwm" path="res://Scenes/Enemies/enemy_knight.tscn" id="3_a54qo"]
 [ext_resource type="Texture2D" uid="uid://fxp7h5mcacqy" path="res://Resources/Legacy-Fantasy - High Forest 2.3/Background/Background.png" id="4_v2tfl"]
 [ext_resource type="Texture2D" uid="uid://bncgn6sa3vqs6" path="res://Resources/Legacy-Fantasy - High Forest 2.3/Trees/Background.png" id="4_yyjik"]
 [ext_resource type="Texture2D" uid="uid://bgfp4vknhb07d" path="res://Resources/Legacy-Fantasy - High Forest 2.3/Trees/Dark-Tree.png" id="5_psejj"]
@@ -5104,6 +5105,9 @@ visible = false
 position = Vector2(162, 128)
 SPEED = 50.0
 
+[node name="Enemy_Knight" parent="." instance=ExtResource("3_a54qo")]
+position = Vector2(818, 320)
+
 [node name="PlayerKnight" parent="." instance=ExtResource("2_638v8")]
 position = Vector2(29, 350)
 
@@ -5116,6 +5120,7 @@ zoom = Vector2(2, 2)
 process_callback = 0
 limit_left = 0
 limit_top = 0
+limit_right = 2304
 limit_bottom = 400
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0

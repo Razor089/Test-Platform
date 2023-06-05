@@ -90,6 +90,7 @@ func handle_input():
 		
 	if is_on_floor() and Input.is_action_just_pressed("attack"):
 		state = ATTACK
+		print(swordArea.knockback_vector)
 
 func move():
 	if direction:
@@ -164,11 +165,13 @@ func facing_direction():
 			sprite.flip_h = false
 		sprite.position.x = 4
 		swordArea.rotation_degrees = 0
+		swordArea.knockback_vector = Vector2.RIGHT
 	elif direction < 0:
 		if not state == SLIDE:
 			sprite.flip_h = true
 		sprite.position.x = -4
 		swordArea.rotation_degrees = 180
+		swordArea.knockback_vector = Vector2.LEFT
 
 
 func _on_animation_tree_animation_finished(anim_name):
@@ -184,5 +187,7 @@ func _on_animation_tree_animation_finished(anim_name):
 
 
 func _on_sword_area_body_entered(body):
-	if body.name == "Snail":
+	if body.name == "Snail" or "Enemy_Knight":
 		body.damage(SWORD_ATTACK_VALUE)
+		if body.name == "Enemy_Knight":
+			body.knockback = swordArea.knockback_vector * 10

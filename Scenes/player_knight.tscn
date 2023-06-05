@@ -1,4 +1,4 @@
-[gd_scene load_steps=90 format=3 uid="uid://daj1ldita1yon"]
+[gd_scene load_steps=91 format=3 uid="uid://daj1ldita1yon"]
 
 [ext_resource type="Script" path="res://Scripts/PlayerController.gd" id="1_24qjd"]
 [ext_resource type="Texture2D" uid="uid://c2bt1pvmwuhtd" path="res://Sprites/Knight/_Idle.png" id="1_ha677"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://emo01oh38g7l" path="res://Sprites/Knight/_Run.png" id="6_e3ykv"]
 [ext_resource type="Texture2D" uid="uid://b6ipi717lsac2" path="res://Sprites/Knight/_Attack2NoMovement.png" id="8_kkho3"]
 [ext_resource type="Texture2D" uid="uid://c5m8ty32rpagp" path="res://Sprites/Knight/_WallSlide.png" id="9_jfil8"]
+[ext_resource type="Script" path="res://Scripts/SwordArea.gd" id="12_mxggv"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_q05kc"]
 radius = 8.0
@@ -935,6 +936,7 @@ disabled = true
 position = Vector2(0, -18)
 collision_layer = 32
 collision_mask = 4
+script = ExtResource("12_mxggv")
 
 [node name="SwordBox" type="CollisionShape2D" parent="SwordArea"]
 position = Vector2(27, 0.5)
