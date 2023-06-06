@@ -10,6 +10,7 @@ extends CharacterBody2D
 @export var JUMP_BUFFER_TIME = 15
 @export var COYOTE_BUFFER_TIME = 15
 @export var ATTACK_BUFFER_TIME = 15
+@export var CHAIN_ATTACK_BUFFER = 15
 @export_category("Attack")
 @export var SWORD_ATTACK_VALUE = 2
 @export var KNOCKBACK_VALUE = 15
@@ -31,6 +32,7 @@ var direction = 0
 var jump_counter = 0
 var coyote_counter = 0
 var attack_counter = 0
+var chain_counter = 0
 var state = IDLE
 
 # State machine
@@ -46,6 +48,9 @@ func _physics_process(delta):
 	
 	if attack_counter > 0:
 		attack_counter -= 1
+	
+	if chain_counter > 0:
+		chain_counter -= 1
 	
 	match state:
 		IDLE:
@@ -81,7 +86,10 @@ func _process(_delta):
 	update_animation()
 
 func handle_input():
-	direction = Input.get_axis("ui_left", "ui_right")
+	if Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right"):
+		direction = Input.get_axis("ui_left", "ui_right")
+	else:
+		joypad_controller()
 	
 	if Input.is_action_just_pressed("rolling"):
 		state = ROLL
@@ -91,7 +99,15 @@ func handle_input():
 		
 	if is_on_floor() and Input.is_action_just_pressed("attack"):
 		state = ATTACK
-		print(swordArea.knockback_vector)
+		chain_counter = CHAIN_ATTACK_BUFFER
+
+func joypad_controller():
+	if Input.is_action_pressed("left"):
+		direction = -1
+	elif Input.is_action_pressed("right"):
+		direction = 1
+	else:
+		direction = 0
 
 func move():
 	if direction:
@@ -183,7 +199,11 @@ func _on_animation_tree_animation_finished(anim_name):
 		playback.travel("Move") # Ho bisogno di mettere qui il travel altrimenti si genera una sequenza aggiuntiva di animazione 
 		attack_counter = ATTACK_BUFFER_TIME
 	elif anim_name == "Attack2":
-		state = IDLE
+		if chain_counter > 0:
+			state = ATTACK
+			attack_counter = 0
+		else:
+			state = IDLE
 		playback.travel("Move") # Ho bisongo di mettere qui il travel altrimenti si generea una sequenza aggiuntiva di animazione
 
 
