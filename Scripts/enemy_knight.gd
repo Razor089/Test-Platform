@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export_category("Movement")
-@export var SPEED = 200
+@export var SPEED = 80
 @export var FRICTION = 50
 @export_category("Character Settings")
 @export var HEALTH = 10
@@ -19,18 +19,22 @@ var state = IDLE
 # Internal variables
 var gravity = ProjectSettings.get("physics/2d/default_gravity")
 var knockback = Vector2.ZERO
-var target = Vector2.ZERO
+var direction = Vector2.ZERO
+var target
+
+# Internal booleans
+var player_in_sight: bool = false
 
 func _ready():
 	animationTree.active = true
 
 func _physics_process(_delta):
-	knockback_move(_delta)
 	match state:
 		IDLE:
 			idle_state()
 		HIT:
-			pass
+			hit_state()
+			knockback_move(_delta)
 		FOLLOW:
 			follow_state(_delta)
 		DEATH:
@@ -39,16 +43,26 @@ func _physics_process(_delta):
 
 
 func _process(_delta):
+	if player_in_sight and not state == HIT and not state == DEATH:
+		state = FOLLOW
 	update_direction()
 	update_animation()
 
 func idle_state():
 	velocity.x = 0
 
+func hit_state():
+	velocity.x = 0
+
 func follow_state(delta):
-	var direction = position.direction_to(target)
+	#var direction = position.direction_to(target.position) # must try (reference_player.global_position - global_position).normalized()
+	direction = (target.global_position - global_position).normalized()
+	#if direction.x > 0:
+	#	velocity.x = 1 * SPEED
+	#elif direction.x < 0:
+	#	velocity.x = -1 * SPEED
 	velocity.x = direction.x * SPEED
-	velocity.y = gravity * delta
+	velocity.y += gravity * delta
 
 func update_animation():
 	animationTree.set("parameters/Idle/blend_position", velocity.x)
@@ -91,5 +105,6 @@ func _on_animation_tree_animation_finished(anim_name):
 		state = IDLE
 
 func _on_enemy_sight_body_entered(body):
-	state = FOLLOW
-	target = body.position
+	if body.name == "PlayerKnight":
+		player_in_sight = true
+		target = body

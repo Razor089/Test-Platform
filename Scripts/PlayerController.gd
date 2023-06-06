@@ -12,6 +12,7 @@ extends CharacterBody2D
 @export var ATTACK_BUFFER_TIME = 15
 @export_category("Attack")
 @export var SWORD_ATTACK_VALUE = 2
+@export var KNOCKBACK_VALUE = 15
 
 # References
 @onready var sprite = $Sprite2D
@@ -190,4 +191,4 @@ func _on_sword_area_body_entered(body):
 	if body.name == "Snail" or "Enemy_Knight":
 		body.damage(SWORD_ATTACK_VALUE)
 		if body.name == "Enemy_Knight":
-			body.knockback = swordArea.knockback_vector * 10
+			body.knockback = swordArea.knockback_vector * KNOCKBACK_VALUE

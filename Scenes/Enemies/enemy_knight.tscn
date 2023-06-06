@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://k5dru7i6twwm"]
+[gd_scene load_steps=28 format=3 uid="uid://k5dru7i6twwm"]
 
 [ext_resource type="Texture2D" uid="uid://cfvc3w66exm56" path="res://Resources/2D_SL_Knight_v1/Run.png" id="1_55hrg"]
 [ext_resource type="Texture2D" uid="uid://cv7vlmlmxtqqu" path="res://Resources/2D_SL_Knight_v1/Death.png" id="1_aucu3"]
@@ -251,8 +251,12 @@ tracks/3/keys = {
 "values": [0, 1, 2, 3, 4, 5, 6, 7]
 }
 
+[sub_resource type="Animation" id="Animation_ll7es"]
+resource_name = "Attack"
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ckb7n"]
 _data = {
+"Attack": SubResource("Animation_ll7es"),
 "Death": SubResource("Animation_0nnfs"),
 "Hurt": SubResource("Animation_1el8q"),
 "Idle": SubResource("Animation_4ga6j"),
@@ -282,6 +286,7 @@ blend_point_1/node = SubResource("AnimationNodeAnimation_awtma")
 blend_point_1/pos = -1.0
 blend_point_2/node = SubResource("AnimationNodeAnimation_uxb5b")
 blend_point_2/pos = 1.0
+blend_mode = 1
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_o1cqa"]
 switch_mode = 2
@@ -308,6 +313,8 @@ transitions = ["Hurt", "Death", SubResource("AnimationNodeStateMachineTransition
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_otkq1"]
 size = Vector2(308, 44)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dp2fu"]
+
 [node name="Enemy_Knight" type="CharacterBody2D"]
 collision_layer = 4
 script = ExtResource("1_hsr7n")
@@ -330,15 +337,25 @@ libraries = {
 tree_root = SubResource("AnimationNodeStateMachine_tr3g4")
 anim_player = NodePath("../AnimationPlayer")
 parameters/playback = SubResource("AnimationNodeStateMachinePlayback_muejo")
-parameters/Idle/blend_position = 0
+parameters/Idle/blend_position = -0.548365
 
 [node name="EnemySight" type="Area2D" parent="."]
+visible = false
 collision_layer = 8
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemySight"]
 position = Vector2(0, 10)
 shape = SubResource("RectangleShape2D_otkq1")
+
+[node name="HitBox" type="Marker2D" parent="."]
+position = Vector2(0, 9)
+
+[node name="HitArea" type="Area2D" parent="HitBox"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox/HitArea"]
+position = Vector2(19, 12)
+shape = SubResource("RectangleShape2D_dp2fu")
 
 [connection signal="animation_finished" from="AnimationTree" to="." method="_on_animation_tree_animation_finished"]
 [connection signal="body_entered" from="EnemySight" to="." method="_on_enemy_sight_body_entered"]
