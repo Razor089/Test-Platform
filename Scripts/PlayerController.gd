@@ -6,6 +6,9 @@ extends CharacterBody2D
 @export var ROLL_SPEED = 280.0
 @export var FALL_SPEED = 300
 @export var SLIDE_SPEED = 100
+@export var FRICTION = 50
+@export_category("Stats")
+@export var HEALTH = 200
 @export_category("Timers")
 @export var JUMP_BUFFER_TIME = 15
 @export var COYOTE_BUFFER_TIME = 15
@@ -29,6 +32,7 @@ var gravity = ProjectSettings.get("physics/2d/default_gravity")
 
 # Internal variables
 var direction = 0
+var knockback = Vector2.ZERO
 var jump_counter = 0
 var coyote_counter = 0
 var attack_counter = 0
@@ -36,7 +40,7 @@ var chain_counter = 0
 var state = IDLE
 
 # State machine
-enum {IDLE, ATTACK, ROLL, SLIDE}
+enum {IDLE, ATTACK, ROLL, SLIDE, DEATH, HIT}
 
 func _ready():
 	animationTree.active = true
@@ -68,6 +72,9 @@ func _physics_process(delta):
 			add_gravity(delta, SLIDE_SPEED)
 			handle_input()
 			slide()
+		HIT:
+			add_gravity(delta, FALL_SPEED)
+			knockback_move(delta)
 	
 	move_and_slide()
 
@@ -84,6 +91,13 @@ func add_gravity(delta, limit):
 func _process(_delta):
 	facing_direction()
 	update_animation()
+
+func hit_state():
+	pass
+
+func knockback_move(delta):
+	knockback = knockback.move_toward(Vector2.ZERO, FRICTION * delta)
+	velocity += knockback
 
 func handle_input():
 	if Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right"):
@@ -175,20 +189,30 @@ func update_animation():
 				playback.travel("WallSlideLeft")
 			elif slideCastRight.is_colliding() and slideCastRight.get_collider():
 				playback.travel("WallSlideRight")
+		HIT:
+			playback.travel("Hit")
 
 func facing_direction():
-	if direction > 0:
-		if not state == SLIDE:
-			sprite.flip_h = false
-		sprite.position.x = 4
-		swordArea.rotation_degrees = 0
-		swordArea.knockback_vector = Vector2.RIGHT
-	elif direction < 0:
-		if not state == SLIDE:
+	if state == HIT:
+		if direction > 0:
 			sprite.flip_h = true
-		sprite.position.x = -4
-		swordArea.rotation_degrees = 180
-		swordArea.knockback_vector = Vector2.LEFT
+			sprite.position.x = -4
+		elif direction < 0:
+			sprite.flip_h = false
+			sprite.position.x = 4
+	else:
+		if direction > 0:
+			if not state == SLIDE:
+				sprite.flip_h = false
+			sprite.position.x = 4
+			swordArea.rotation_degrees = 0
+			swordArea.knockback_vector = Vector2.RIGHT
+		elif direction < 0:
+			if not state == SLIDE:
+				sprite.flip_h = true
+			sprite.position.x = -4
+			swordArea.rotation_degrees = 180
+			swordArea.knockback_vector = Vector2.LEFT
 
 
 func _on_animation_tree_animation_finished(anim_name):
@@ -205,10 +229,18 @@ func _on_animation_tree_animation_finished(anim_name):
 		else:
 			state = IDLE
 		playback.travel("Move") # Ho bisongo di mettere qui il travel altrimenti si generea una sequenza aggiuntiva di animazione
+	elif anim_name == "Hit":
+		state = IDLE
 
+func damage(value):
+	HEALTH -= value
+	state = HIT
+	if HEALTH <= 0:
+		state = DEATH
 
 func _on_sword_area_body_entered(body):
 	if body.name == "Snail" or "Enemy_Knight":
 		body.damage(SWORD_ATTACK_VALUE)
 		if body.name == "Enemy_Knight":
 			body.knockback = swordArea.knockback_vector * KNOCKBACK_VALUE
+

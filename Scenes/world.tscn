@@ -5107,6 +5107,7 @@ SPEED = 50.0
 
 [node name="Enemy_Knight" parent="." instance=ExtResource("3_a54qo")]
 position = Vector2(818, 320)
+debug = true
 
 [node name="PlayerKnight" parent="." instance=ExtResource("2_638v8")]
 position = Vector2(29, 350)

@@ -6,6 +6,7 @@ extends CharacterBody2D
 @export_category("Character Settings")
 @export var HEALTH = 10
 @export var DAMAGE = 5
+@export var KNOCKBACK_VALUE = 20
 @export var IS_INVULNERABLE: bool = false
 @export_category("Debug")
 @export var debug = false
@@ -15,6 +16,8 @@ extends CharacterBody2D
 @onready var label = $DebugLabel
 @onready var animationTree = $AnimationTree
 @onready var playback = $AnimationTree.get("parameters/playback")
+@onready var swordPoint = $SwordAreaPoint
+@onready var swordArea = $SwordAreaPoint/SwordArea
 
 # State machine
 enum {IDLE, FOLLOW, HIT, ATTACK, DEATH}
@@ -28,6 +31,7 @@ var target = null
 
 # Internal booleans
 var player_in_sight: bool = false
+var is_player_at_range: bool = false
 
 func _ready():
 	animationTree.active = true
@@ -56,11 +60,13 @@ func _process(_delta):
 	update_animation()
 
 func check_if_player_is_in_sight():
-	if player_in_sight and state == IDLE:
+	if player_in_sight and state == IDLE and not is_player_at_range:
 		state = FOLLOW
 
 func idle_state():
 	velocity.x = 0
+	if is_player_at_range:
+		state = ATTACK
 
 func hit_state():
 	velocity.x = 0
@@ -91,13 +97,19 @@ func update_direction():
 	if state == HIT:
 		if knockback.x < 0:
 			sprite.flip_h = false
+			swordPoint.rotation_degrees = 0
 		elif knockback.x > 0:
 			sprite.flip_h = true
+			swordPoint.rotation_degrees = 180
 	else:
 		if velocity.x > 0:
 			sprite.flip_h = false
+			swordPoint.rotation_degrees = 0
+			swordArea.knockback_vector = Vector2.RIGHT
 		elif velocity.x < 0:
 			sprite.flip_h = true
+			swordPoint.rotation_degrees = 180
+			swordArea.knockback_vector = Vector2.LEFT
 
 func knockback_move(delta):
 	knockback = knockback.move_toward(Vector2.ZERO, FRICTION * delta)
@@ -135,6 +147,7 @@ func _on_animation_tree_animation_finished(anim_name):
 		state = IDLE
 	elif anim_name == "Attack":
 		state = IDLE
+		playback.travel("Idle")
 
 func _on_enemy_sight_body_entered(body):
 	if body.name == "PlayerKnight" and not state == DEATH:
@@ -143,9 +156,14 @@ func _on_enemy_sight_body_entered(body):
 
 func _on_hit_area_body_entered(body):
 	if body.name == "PlayerKnight" and not state == DEATH:
+		is_player_at_range = true
 		state = ATTACK
 
 func _on_hit_area_body_exited(body):
-	#if body.name == "PlayerKnight" and not state == DEATH:
-	#	state = IDLE
-	pass
+	if body.name == "PlayerKnight":
+		is_player_at_range = false
+
+func _on_sword_area_area_entered(area):
+	if area.name == "HitArea":
+		area.damage(ATTACK)
+		area.knockback = swordArea.knockback_vector * KNOCKBACK_VALUE

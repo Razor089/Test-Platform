@@ -19,8 +19,8 @@ config/icon="res://icon.svg"
 
 window/size/viewport_width=1280
 window/size/viewport_height=800
-window/dpi/allow_hidpi=false
 window/stretch/mode="viewport"
+window/dpi/allow_hidpi=false
 
 [editor]
 
@@ -71,6 +71,7 @@ right={
 2d_physics/layer_5="PlayerHitBox"
 2d_physics/layer_6="SwordBox"
 2d_physics/layer_7="EnemyHitBox"
+2d_physics/layer_8="EnemyHurtBox"
 
 [rendering]
 

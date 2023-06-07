@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://k5dru7i6twwm"]
+[gd_scene load_steps=35 format=3 uid="uid://k5dru7i6twwm"]
 
 [ext_resource type="Texture2D" uid="uid://cfvc3w66exm56" path="res://Resources/2D_SL_Knight_v1/Run.png" id="1_55hrg"]
 [ext_resource type="Texture2D" uid="uid://cv7vlmlmxtqqu" path="res://Resources/2D_SL_Knight_v1/Death.png" id="1_aucu3"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://byxnhr3f3s5n5" path="res://Resources/2D_SL_Knight_v1/Hurt.png" id="1_lahgp"]
 [ext_resource type="Texture2D" uid="uid://cdd4o8rrov4r7" path="res://Resources/2D_SL_Knight_v1/Idle.png" id="2_37dxb"]
 [ext_resource type="Texture2D" uid="uid://bupjte0b4n5dx" path="res://Resources/2D_SL_Knight_v1/Attacks.png" id="3_ecqcf"]
+[ext_resource type="Script" path="res://Scripts/EnemySwordArea.gd" id="7_5b4uj"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_02gh5"]
 radius = 9.0
@@ -62,6 +63,18 @@ tracks/3/keys = {
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SwordAreaPoint/SwordArea/SwordBox:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.3, 0.4, 0.7, 0.9, 1, 1.4, 1.6, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [false, true, false, true, false, true, false, true]
+}
 
 [sub_resource type="Animation" id="Animation_0nnfs"]
 resource_name = "Death"
@@ -114,18 +127,6 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Sprite2D:modulate")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(1, 2),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_1el8q"]
@@ -192,18 +193,6 @@ tracks/4/keys = {
 "update": 1,
 "values": [true, null]
 }
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Sprite2D:modulate")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
 
 [sub_resource type="Animation" id="Animation_4ga6j"]
 resource_name = "Idle"
@@ -257,18 +246,6 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5, 6, 7]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Sprite2D:modulate")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_6t0r2"]
@@ -413,6 +390,9 @@ size = Vector2(308, 44)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nu881"]
 size = Vector2(54, 20)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4qqsy"]
+size = Vector2(21, 43)
+
 [node name="Enemy_Knight" type="CharacterBody2D"]
 collision_layer = 4
 script = ExtResource("1_hsr7n")
@@ -454,6 +434,19 @@ collision_mask = 2
 position = Vector2(0, 22)
 shape = SubResource("RectangleShape2D_nu881")
 
+[node name="SwordAreaPoint" type="Marker2D" parent="."]
+position = Vector2(0, 10)
+
+[node name="SwordArea" type="Area2D" parent="SwordAreaPoint"]
+position = Vector2(29, 0)
+collision_layer = 128
+collision_mask = 16
+script = ExtResource("7_5b4uj")
+
+[node name="SwordBox" type="CollisionShape2D" parent="SwordAreaPoint/SwordArea"]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_4qqsy")
+
 [node name="DebugLabel" type="Label" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
@@ -474,3 +467,4 @@ vertical_alignment = 1
 [connection signal="body_entered" from="EnemySight" to="." method="_on_enemy_sight_body_entered"]
 [connection signal="body_entered" from="HitArea" to="." method="_on_hit_area_body_entered"]
 [connection signal="body_exited" from="HitArea" to="." method="_on_hit_area_body_exited"]
+[connection signal="area_entered" from="SwordAreaPoint/SwordArea" to="." method="_on_sword_area_area_entered"]
