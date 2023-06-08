@@ -128,6 +128,18 @@ tracks/3/keys = {
 "update": 1,
 "values": [0, 1, 2, 3]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SwordAreaPoint/SwordArea/SwordBox:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_1el8q"]
 resource_name = "Hurt"
@@ -193,6 +205,18 @@ tracks/4/keys = {
 "update": 1,
 "values": [true, null]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("SwordAreaPoint/SwordArea/SwordBox:disabled")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_4ga6j"]
 resource_name = "Idle"
@@ -247,6 +271,18 @@ tracks/3/keys = {
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5, 6, 7]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SwordAreaPoint/SwordArea/SwordBox:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_6t0r2"]
 length = 0.001
@@ -261,6 +297,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SwordAreaPoint/SwordArea/SwordBox:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_bnkqt"]
@@ -315,6 +363,18 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5, 6, 7]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SwordAreaPoint/SwordArea/SwordBox:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ckb7n"]
@@ -391,11 +451,12 @@ size = Vector2(308, 44)
 size = Vector2(54, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4qqsy"]
-size = Vector2(21, 43)
+size = Vector2(40, 43)
 
 [node name="Enemy_Knight" type="CharacterBody2D"]
 collision_layer = 4
 script = ExtResource("1_hsr7n")
+KNOCKBACK_VALUE = 30
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("3_ecqcf")
@@ -444,8 +505,9 @@ collision_mask = 16
 script = ExtResource("7_5b4uj")
 
 [node name="SwordBox" type="CollisionShape2D" parent="SwordAreaPoint/SwordArea"]
-position = Vector2(0.5, 0)
+position = Vector2(-9, 0)
 shape = SubResource("RectangleShape2D_4qqsy")
+disabled = true
 
 [node name="DebugLabel" type="Label" parent="."]
 anchors_preset = 8

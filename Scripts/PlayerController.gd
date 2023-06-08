@@ -74,6 +74,7 @@ func _physics_process(delta):
 			slide()
 		HIT:
 			add_gravity(delta, FALL_SPEED)
+			#hit_state()
 			knockback_move(delta)
 	
 	move_and_slide()
@@ -93,11 +94,11 @@ func _process(_delta):
 	update_animation()
 
 func hit_state():
-	pass
+	velocity.x = 0
 
 func knockback_move(delta):
 	knockback = knockback.move_toward(Vector2.ZERO, FRICTION * delta)
-	velocity += knockback
+	velocity = knockback
 
 func handle_input():
 	if Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right"):
@@ -194,10 +195,10 @@ func update_animation():
 
 func facing_direction():
 	if state == HIT:
-		if direction > 0:
+		if knockback.x > 0:
 			sprite.flip_h = true
 			sprite.position.x = -4
-		elif direction < 0:
+		elif knockback.x < 0:
 			sprite.flip_h = false
 			sprite.position.x = 4
 	else:
