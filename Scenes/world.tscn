@@ -5108,7 +5108,9 @@ SPEED = 50.0
 [node name="Enemy_Knight" parent="." instance=ExtResource("3_a54qo")]
 position = Vector2(818, 320)
 KNOCKBACK_VALUE = 120
-debug = true
+
+[node name="Enemy_Knight2" parent="." instance=ExtResource("3_a54qo")]
+position = Vector2(875, 320)
 
 [node name="PlayerKnight" parent="." instance=ExtResource("2_638v8")]
 position = Vector2(29, 350)

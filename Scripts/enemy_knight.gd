@@ -76,6 +76,9 @@ func attack_state():
 
 func follow_state():
 	#var direction = position.direction_to(target.position) # must try (reference_player.global_position - global_position).normalized()
+	if not player_in_sight:
+		state = IDLE
+		
 	direction = (target.global_position - global_position).normalized()
 	velocity.x = direction.x * SPEED
 
@@ -167,3 +170,7 @@ func _on_sword_area_area_entered(area):
 	if area.name == "HitArea":
 		area.damage(ATTACK)
 		area.knockback = swordArea.knockback_vector * KNOCKBACK_VALUE
+
+func _on_enemy_sight_body_exited(body):
+	if body.name == "PlayerKnight":
+		player_in_sight = false
